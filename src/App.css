@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Reset básico e fontes */
+body, html {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilo do cabeçalho da aplicação */
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  background-size: cover;
+}
+
+/* Estilo dos links */
+.App-link {
+  color: #61dafb;
+}
+
+/* Estilo das cartas de tarô */
+.tarot-cards img {
+  margin: 10px;
+  width: 100px;
+  height: auto;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.tarot-cards img:hover {
+  transform: scale(1.1);
+}
+
+/* Carta selecionada */
+.card-selected {
+  border: 3px solid gold;
+  box-shadow: 0px 0px 10px goldenrod;
+  transform: scale(1.1);
+  animation: pulse 1s infinite;
+}
+
+/* Animação da carta selecionada */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .tarot-cards img {
+    width: 80px;
+  }
+  .App-header {
+    padding: 20px;
+  }
+}
+
+/* Estilos para botões e seletores */
+button, select {
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover, select:hover {
+  background-color: #45a049;
+}
+/* Estilo dos detalhes da carta */
+.card-details {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+/* Estilo do botão "Fechar Detalhes" */
+.card-details button {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.card-details button:hover {
+  background-color: #f44336;
+}
+
+
