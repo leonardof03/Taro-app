@@ -50,7 +50,7 @@ function App() {
     }
     setIsLoading(true);
     const cardDescription = tarotDeck[selectedCard].description;
-    const prompt = `Realize uma leitura de Tarô no tema '${readingType}' utilizando o layout '${layoutType}' para a carta com a seguinte descrição: '${cardDescription}'. Por favor, forneça orientações e insights sobre o assunto que possam ser úteis e esclarecedores para o cliente.`;
+    const prompt = `Realiza uma leitura de Tarô no tema '${readingType}' utilizando o layout '${layoutType}' para a carta com a seguinte descrição: '${cardDescription}'. Por favor, forneça orientações e insights sobre o assunto que possam ser úteis e esclarecedores para o cliente.`;
 
     try {
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
