@@ -1,7 +1,7 @@
 /* Fundo com imagens de cartas de tarô */
 body {
   background-color: #1a1a1a; /* Cor de fundo escura */
-  background-image: url('/Users/lferreira/Downloads/taro-app/public/images/fundo.jpg'); /* URL da imagem de fundo */
+  background-image: url('/public/images/fundo.jpg'); /* URL da imagem de fundo */
   background-size: cover; /* Faz a imagem cobrir todo o corpo */
   background-position: center; /* Centraliza a imagem horizontalmente e verticalmente */
   font-family: 'GothicFont', sans-serif; /* Fonte gótica */
