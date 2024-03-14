@@ -64,6 +64,51 @@ const tarotDeck = {
       description: ' Surrender, sacrifice, letting go, and seeing things from a new perspective.',
       meaning: 'The Hanged Man hangs suspended in time, a willing sacrifice for the sake of enlightenment. His inverted position offers a fresh perspective, a new way of seeing the world. He embraces the art of surrender, letting go of attachments and expectations, allowing life to unfold as it will. His sacrifice brings clarity and insight, a deeper understanding of the mysteries of existence. The Hanged Man reminds us that sometimes the path to enlightenment requires us to release control and surrender to the flow of life. He urges us to embrace the unknown, to trust in the wisdom of the universe, and to surrender to the journey of self-discovery.'   
     },
+      'card2.png': {
+      name: 'Death',
+      description: 'Endings, transformation, rebirth, and the inevitability of change.',
+      meaning: 'Death rides into town on his pale horse, a harbinger of transformation and change. His scythe cuts through the fabric of existence, severing ties to the past and clearing the way for new beginnings. He is the great equalizer, the force that brings balance to the cycle of life and death. His presence may be unsettling, even frightening, but it is necessary for growth and renewal. Death reminds us that change is inevitable, that endings are simply beginnings in disguise. He urges us to embrace the transformative power of release, to let go of what no longer serves us, and to trust in the promise of rebirth.'   
+    },
+      'card2.png': {
+      name: 'Temperance',
+      description: 'Balance, harmony, moderation, and the blending of opposites.',
+      meaning: 'Temperance stands at the edge of a tranquil river, pouring water from one cup to another with perfect equilibrium. She is the alchemist, blending opposites to create harmony and balance. Her presence brings a sense of peace and tranquility, her actions guided by intuition and wisdom. She reminds us of the importance of moderation and self-control, urging us to find balance in all things. Temperance encourages us to embrace the middle path, to seek harmony between the conflicting forces within ourselves and the world around us.'   
+    },
+      'card2.png': {
+      name: 'The Devil',
+      description: 'Temptation, bondage, materialism, and the chains that bind us.',
+      meaning: 'The Devil lurks in the shadows, a sinister figure of temptation and desire. His chains bind us to the material world, trapping us in a cycle of addiction and indulgence. His presence is intoxicating, seducing us with promises of pleasure and power. Yet beneath his glamorous facade lies a deeper truth, a reminder of the illusions that ensnare us. The Devil urges us to confront our own shadow selves, to acknowledge the chains that bind us, and to break free from the bondage of materialism. He challenges us to reclaim our power, to transcend our earthly desires, and to seek true freedom from within.'   
+    },
+     'card2.png': {
+      name: 'The Tower',
+      description: 'Destruction, upheaval, chaos, and the breaking down of old structures.',
+      meaning: 'The Tower stands tall and proud, a symbol of strength and stability. Yet its foundation is built on shaky ground, its walls crumbling beneath the weight of change. Lightning strikes, flames engulf, and chaos reigns as the tower comes crashing down. It is a moment of destruction and upheaval, a breaking free from the constraints of the past. The Tower reminds us that sometimes we must tear down the old to make way for the new, that growth often comes through pain and adversity. It urges us to embrace the chaos, to trust in the process of transformation, and to rebuild from the ashes stronger than before.'   
+    },
+    'card2.png': {
+      name: 'The Star',
+      description: 'Destruction, upheaval, chaos, and the breaking down of old structures.',
+      meaning: 'The Star shines brightly in the night sky, a beacon of hope and inspiration in times of darkness. Her gentle light illuminates the path ahead, guiding travelers on their journey through the unknown. She is a symbol of healing and renewal, her waters flowing with the promise of new beginnings. The Star reminds us that even in our darkest moments, there is always a glimmer of hope, a light that shines from within. She urges us to trust in the power of faith and intuition, to believe in our dreams, and to follow the guidance of our inner light.'   
+    },
+       'card2.png': {
+      name: 'The Moon',
+      description: 'Illusion, fear, intuition, and the mysteries of the subconscious mind.',
+      meaning: 'The Moon hangs low in the sky, casting a pale light over the landscape below. Shadows dance and shift in the darkness, obscuring the truth and distorting reality. It is a time of uncertainty and confusion, when fears and anxieties bubble to the surface. Yet amidst the chaos lies the wisdom of the subconscious mind, the intuitive knowing that transcends logic and reason. The Moon reminds us to trust our instincts, to navigate through the shadows with courage and clarity. She urges us to embrace the mysteries of the night, to uncover the hidden truths that lie buried deep within our souls.'   
+    },
+       'card2.png': {
+      name: 'The Sun',
+      description: 'Joy, vitality, success, and the radiant energy of life.',
+      meaning: 'The Sun shines brightly in the sky, a symbol of joy, vitality, and abundance. Its golden rays warm the earth, bringing life and growth to all living creatures. It is a time of celebration and happiness, when everything seems to fall into place with ease. The Sun reminds us to embrace the simple pleasures of life, to bask in the warmth of love and friendship, and to revel in the beauty of the world around us. It urges us to shine our light brightly, to share our gifts with the world, and to live each day with gratitude and joy.'   
+    },
+     'card2.png': {
+      name: 'Judgement',
+      description: 'Rebirth, redemption, awakening, and the call to embrace one\'s true purpose.',
+      meaning: 'Judgement heralds the dawn of a new era, a time of rebirth and renewal. The trumpet sounds, awakening the souls of the departed and calling them forth to face their final reckoning. It is a moment of truth and clarity, when the past is laid bare and the future beckons with promise. Judgement reminds us to confront our own truths, to release the burdens of the past, and to embrace the call of our higher selves. It urges us to heed the inner voice that whispers our true purpose, to rise from the ashes of the past and embrace the journey of self-discovery.'   
+    },
+     'card2.png': {
+      name: 'The World',
+      description: 'Completion, fulfillment, wholeness, and the realization of one\'s goals.',
+      meaning: 'The World stands as a testament to the culmination of a journey, a symbol of completion and fulfillment. She dances gracefully amidst the stars, her arms outstretched in a gesture of unity and wholeness. She is the embodiment of harmony and balance, the convergence of all elements in perfect alignment. The World reminds us that we are part of something greater than ourselves, connected to the web of life that binds us all together. She urges us to celebrate our achievements, to revel in the beauty of the world around us, and to embrace the infinite possibilities that lie ahead.'   
+    },
     // Inclua todas as 78 cartas com suas descrições e significados
   };
   
