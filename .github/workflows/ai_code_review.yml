@@ -20,4 +20,4 @@ jobs:
     - name: Run Analysis
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python .github/scripts/analyze_pr.py
+      run: python scripts/analyze_pr.py
