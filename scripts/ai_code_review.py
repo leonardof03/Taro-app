@@ -2,7 +2,7 @@ import openai
 
 def main():
     # Substitua pela sua chave de API real
-    openai.api_key = "sk-proj-MEU8923wdVOM8vADDdMmT3BlbkFJmC9vtQZjPM2fb4lXj0UI"
+    openai.api_key = "YOUR_OPENAI_API_KEY"
 
     code_snippet = """
     # Exemplo de código Python
@@ -14,17 +14,15 @@ def main():
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        response = openai.Completion.create(
             model="gpt-4.0-turbo",
-            messages=[
-                {"role": "system", "content": "Você é um assistente de IA especializado em revisão de código. Por favor, analise o código fornecido e sugira melhorias."},
-                {"role": "user", "content": code_snippet}
-            ]
+            prompt=f"Revisar o seguinte código Python e sugerir melhorias:\n\n{code_snippet}",
+            max_tokens=150
         )
         print("Revisão e sugestões de melhoria:")
-        print(response['choices'][0]['message']['content'])
+        print(response['choices'][0]['text'])
     except Exception as e:
-        print(f"Erro: {e}")
+        print(f"Erro ao acessar a API da OpenAI: {e}")
 
 if __name__ == "__main__":
     main()
