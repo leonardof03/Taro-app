@@ -2,7 +2,7 @@ import os
 import requests
 
 # Definindo o token do GitHub e detalhes do pull request
-github_token = os.getenv('MY_LEOO')
+github_token = os.getenv('GITHUB_TOKEN')
 pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
