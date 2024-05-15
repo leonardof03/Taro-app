@@ -9,7 +9,8 @@ repo_name = "leonardof03/taro-app"
 
 # Configura os headers para uso nas requisições HTTP ao GitHub
 def get_github_headers():
-    return {'Authorization': f'token {github_key}', 'Content-Type': 'application/json'}
+    return {'Authorization': f'token {github_token}', 'Content-Type': 'application/json'}
+
 
 # Configura os headers para uso nas requisições HTTP à API da OpenAI
 def get_openai_headers():
