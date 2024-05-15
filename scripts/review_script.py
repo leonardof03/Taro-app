@@ -1,10 +1,8 @@
 import os
 import requests
 
-# Chaves de API configuradas diretamente no código
 github_token = os.getenv('MY_LEO')
-openai_api_key = 'sk-proj-MEU8923wdVOM8vADDdMmT3BlbkFJmC9vtQZjPM2fb4lXj0UI'
-pull_index = os.getenv('PULL_REQUEST_ID')  # Presumindo que o ID do pull request ainda seja fornecido por variável de ambiente
+pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
 def get_headers(auth_token, content_type='application/json'):
