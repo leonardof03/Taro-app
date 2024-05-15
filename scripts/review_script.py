@@ -3,6 +3,7 @@ import requests
 
 # Definindo o token do GitHub e detalhes do pull request
 github_token = os.getenv('GITHUB_TOKEN')
+openai_api_key = os.getenv('OPENAI_API_KEY')  # Certifique-se de definir esta variável de ambiente no seu workflow
 pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
