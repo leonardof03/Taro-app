@@ -33,7 +33,7 @@ def review_code_with_chatgpt(code_changes):
 
 def post_comment_to_pull_request(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
-    headers = get_headers(githubtn_code_review.ymloken)
+    headers = get_headers(github_token)
     data = {'body': comment}
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:
@@ -46,7 +46,6 @@ if __name__ == "__main__":
     if changes:
         code_snippets = '\n'.join([file['patch'] for file in changes if 'patch' in file])
         review_comment = review_code_with_chatgpt(code_snippets)
-        post_comment_to_pull_request(review_text=review_comment)
+        post_comment_to_pull_request(review_comment)
     else:
         print("No changes to review")
-
