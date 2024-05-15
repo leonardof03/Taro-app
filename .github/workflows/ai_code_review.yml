@@ -15,6 +15,6 @@ jobs:
     - name: Run review script
       env:
         PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
-        GITHUB_TOKEN: ${{ secrets.MY_LEO }}
+        GITHUB_TOKEN: ${{ secrets.MY_LEOO }}
       run: python review_script.py
       working-directory: scripts
