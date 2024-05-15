@@ -1,23 +1,19 @@
-name: Analyze Pull Request
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+name: AI Code Review
+on: [pull_request]
 
 jobs:
-  analyze:
+  review:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install openai
-    - name: Run Analysis
+        python-version: '3.x'
+    - name: Install dependencies
+      run: pip install requests
+    - name: Review Pull Request
       env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python scripts/analyze_pr.py
+      run: python review_script.py
