@@ -14,6 +14,7 @@ jobs:
       run: pip install requests
     - name: Run review script
       env:
-        PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
+        PULL_REQUEST_ID: ${{ github.event.pull_url.request.number }}
+        GITHUB_TOKEN: ${{ secrets.MY_LEO }}  # Utilizando o segredo configurado
       run: python review_script.py
       working-directory: scripts
