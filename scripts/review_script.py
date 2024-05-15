@@ -1,13 +1,16 @@
 import os
 import requests
 
+# Definindo o token do GitHub e detalhes do pull request
 github_token = os.getenv('MY_LEO')
 pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
+# Configura os headers para uso nas requisições HTTP
 def get_headers(auth_token, content_type='application/json'):
     return {'Authorization': f'token {auth_token}', 'Content-Type': content_type}
 
+# Obtém as alterações do pull request especificado
 def get_pull_request_changes():
     url = f"https://api.github.com/repos/{repo_name}/pulls/{pull_index}/files"
     headers = get_headers(github_token)
@@ -16,11 +19,14 @@ def get_pull_request_changes():
         return response.json()
     else:
         print(f"Failed to fetch data: HTTP {response.status_code}, {response.text}")
+        print(f"Response Headers: {response.headers}")
+        print(f"Request Headers: {headers}")
         return []
 
+# Avalia o código usando o modelo da OpenAI
 def review_code_with_chatgpt(code_changes):
     prompt = "Review the following code changes and provide comments:\n\n" + code_changes
-    headers = get_headers(openai_api_key, 'application/json')
+    headers = get_headers(os.getenv('OPENAI_API_KEY'), 'application/json')
     data = {"model": "gpt-3.5-turbo", "prompt": prompt, "max_tokens": 150}
     response = requests.post('https://api.openai.com/v1/engines/davinci-codex/completions', headers=headers, json=data)
     if response.ok:
@@ -29,6 +35,7 @@ def review_code_with_chatgpt(code_changes):
         print(f"Failed to generate review: HTTP {response.status_code}, {response.text}")
         return "Error generating review."
 
+# Posta um comentário no pull request com a avaliação
 def post_comment_to_pull_request(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
     headers = get_headers(github_token)
@@ -39,11 +46,15 @@ def post_comment_to_pull_request(comment):
     else:
         print(f"Failed to post comment: HTTP {response.status_code}, {response.text}")
 
+# Main execution block
 if __name__ == "__main__":
+    if not github_token:
+        print("GitHub token not available in environment variables.")
+    
     changes = get_pull_request_changes()
     if changes:
         code_snippets = '\n'.join([file['patch'] for file in changes if 'patch' in file])
         review_comment = review_code_with_chatgpt(code_snippets)
         post_comment_to_pull_request(review_comment)
     else:
-        print("No changes to review")
+        print("No changes to review or failed to fetch changes.")
