@@ -3,12 +3,12 @@ import openai
 import requests
 
 # Obter variáveis de ambiente
-github_token = os.getenv('GITHUB_TOKEN').strip()  # Remover possíveis espaços em branco e novas linhas
+github_token = os.getenv('GITHUB_TOKEN').strip()
 repository = os.getenv('REPOSITORY').strip()
 pull_request_number = os.getenv('PULL_REQUEST_NUMBER').strip()
 
 # Configurar OpenAI
-openai.api_key = os.getenv('OPENAI_API_KEY').strip()  # Remover possíveis espaços em branco e novas linhas
+openai.api_key = os.getenv('OPENAI_API_KEY').strip()
 
 # Função para obter os arquivos modificados no pull request
 def get_pull_request_files():
