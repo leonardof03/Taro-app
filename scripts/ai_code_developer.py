@@ -6,10 +6,12 @@ def main():
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     try:
-        response = openai.Completion.create(
-    engine="gpt-3.5-turbo",
-    prompt="Translate the following English text to French: Hello, how are you?",
-    max_tokens=60
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "Você é um assistente útil."},
+        {"role": "user", "content": "Olá, como posso converter Celsius para Fahrenheit?"}
+    ]
 )
 
         print(response.choices[0].text.strip())
