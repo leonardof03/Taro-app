@@ -1,5 +1,7 @@
 name: AI-Powered Code Review
-on: [pull_request]
+on:
+  pull_request:
+    branches: [ main ]  # ou qualquer branch que você deseja monitorar
 
 jobs:
   review-code:
@@ -14,9 +16,12 @@ jobs:
         python-version: '3.9'
 
     - name: Install dependencies
-      run: pip install openai requests
+      run: |
+        pip install openai requests
 
     - name: Run AI Code Review
       env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python .github/scripts/ai_code_review.py
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+        PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+      run: python scripts/ai_code_review.py
