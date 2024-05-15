@@ -46,6 +46,7 @@ if __name__ == "__main__":
     if changes:
         code_snippets = '\n'.join([file['patch'] for file in changes if 'patch' in file])
         review_comment = review_code_with_chatgpt(code_snippets)
-        post_comment_to_pull_request(review_comment)
+        post_comment_to_pull_request(review_text=review_comment)
     else:
-  print("No changes to review")
+        print("No changes to review")
+
