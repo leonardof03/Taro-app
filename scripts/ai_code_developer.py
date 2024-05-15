@@ -7,10 +7,11 @@ def main():
 
     try:
         response = openai.Completion.create(
-          engine="davinci",
-          prompt="Translate the following English text to French: Hello, how are you?",
-          max_tokens=60
-        )
+    engine="gpt-3.5-turbo",
+    prompt="Translate the following English text to French: Hello, how are you?",
+    max_tokens=60
+)
+
         print(response.choices[0].text.strip())
     except Exception as e:
         print(f"Erro ao acessar a API da OpenAI: {str(e)}")
