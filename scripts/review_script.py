@@ -8,8 +8,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 pull_index = os.getenv('PULL_REQUEST_ID')
 
 # URL do repositório e ID do pull request (ajustar conforme necessário)
-repo_name = "seu_usuario/seu_repositorio"
-pull_request_id = "id_do_pull_request"  # Este ID você pode dinamizar conforme o evento do GitHub Actions
+repo_name = "leonardof03/taro-app"
 
 # Função para obter as mudanças do pull request
 def get_pull_request_changes():
@@ -35,7 +34,7 @@ def review_code_with_chatgpt(code_changes):
 
 # Função para postar comentários no pull request
 def post_comment_to_pull_request(comment):
-    url = f"https://api.github.com/repos/{repo_name}/issues/{pull_request_id}/comments"
+    url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
     headers = {
         'Authorization': f'token {github_token}',
         'Content-Type': 'application/json'
