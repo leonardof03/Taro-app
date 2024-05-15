@@ -5,6 +5,7 @@ import requests
 # Configuração das chaves de API
 github_token = os.getenv('MY_GITHUB_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
+pull_index = os.getenv('PULL_REQUEST_ID')
 
 # URL do repositório e ID do pull request (ajustar conforme necessário)
 repo_name = "seu_usuario/seu_repositorio"
