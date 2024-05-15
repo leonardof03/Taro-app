@@ -16,5 +16,7 @@ jobs:
       env:
         PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
         GITHUB_TOKEN: ${{ secrets.MY_LEO }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
       run: python review_script.py
       working-directory: scripts
