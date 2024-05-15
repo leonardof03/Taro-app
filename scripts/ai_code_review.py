@@ -4,8 +4,8 @@ import requests
 
 # Obter variáveis de ambiente
 github_token = os.getenv('GITHUB_TOKEN').strip()  # Remover possíveis espaços em branco e novas linhas
-repository = os.getenv('REPOSITORY')
-pull_request_number = os.getenv('PULL_REQUEST_NUMBER')
+repository = os.getenv('REPOSITORY').strip()
+pull_request_number = os.getenv('PULL_REQUEST_NUMBER').strip()
 
 # Configurar OpenAI
 openai.api_key = os.getenv('OPENAI_API_KEY').strip()  # Remover possíveis espaços em branco e novas linhas
