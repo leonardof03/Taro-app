@@ -13,10 +13,9 @@ jobs:
     - name: Install dependencies
       run: pip install requests
     - name: Run review script
-    env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
       run: python review_script.py
       working-directory: scripts
-
