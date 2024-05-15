@@ -3,7 +3,7 @@ import openai
 import requests
 
 # Obter variáveis de ambiente
-personal_access_token = os.getenv('PERSONAL_ACCESS_TOKEN')
+github_token = os.getenv('GITHUB_TOKEN')
 repository = os.getenv('REPOSITORY')
 pull_request_number = os.getenv('PULL_REQUEST_NUMBER')
 
@@ -14,7 +14,7 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 def get_pull_request_files():
     url = f"https://api.github.com/repos/{repository}/pulls/{pull_request_number}/files"
     headers = {
-        "Authorization": f"token {personal_access_token}",
+        "Authorization": f"token {github_token}",
         "Accept": "application/vnd.github.v3+json"
     }
     response = requests.get(url, headers=headers)
@@ -25,7 +25,7 @@ def get_pull_request_files():
 def post_pull_request_comment(comment):
     url = f"https://api.github.com/repos/{repository}/issues/{pull_request_number}/comments"
     headers = {
-        "Authorization": f"token {personal_access_token}",
+        "Authorization": f"token {github_token}",
         "Accept": "application/vnd.github.v3+json"
     }
     data = {"body": comment}
