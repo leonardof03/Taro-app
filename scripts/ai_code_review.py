@@ -1,28 +1,18 @@
 import openai
+import os
 
 def main():
-    # Substitua pela sua chave de API real
-    openai.api_key = "YOUR_OPENAI_API_KEY"
-
-    code_snippet = """
-    # Exemplo de código Python
-    def calculate_factorial(n):
-        if n == 0:
-            return 1
-        else:
-            return n * calculate_factorial(n-1)
-    """
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
     try:
         response = openai.Completion.create(
-            model="gpt-4.0-turbo",
-            prompt=f"Revisar o seguinte código Python e sugerir melhorias:\n\n{code_snippet}",
-            max_tokens=150
+          engine="davinci",
+          prompt="Translate the following English text to French: Hello, how are you?",
+          max_tokens=60
         )
-        print("Revisão e sugestões de melhoria:")
-        print(response['choices'][0]['text'])
+        print(response.choices[0].text.strip())
     except Exception as e:
-        print(f"Erro ao acessar a API da OpenAI: {e}")
+        print(f"Erro ao acessar a API da OpenAI: {str(e)}")
 
 if __name__ == "__main__":
     main()
