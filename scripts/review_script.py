@@ -3,7 +3,7 @@ import json
 import requests
 
 # Configuração das chaves de API
-github_token = os.getenv('GITHUB_TOKEN')
+github_token = os.getenv('MY_GITHUB_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
 
 # URL do repositório e ID do pull request (ajustar conforme necessário)
