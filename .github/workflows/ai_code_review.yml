@@ -8,22 +8,22 @@ jobs:
   review-code:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # Atualizado para v4, que usa Node.js 20
+      - name: Checkout code
+        uses: actions/checkout@v4  # Atualizado para v4, que usa Node.js 20
 
-    - name: Setup Python
-      uses: actions/setup-python@v4  # Atualizado para v4, que usa Node.js 20
-      with:
-        python-version: '3.9'
+      - name: Setup Python
+        uses: actions/setup-python@v4  # Atualizado para v4, que usa Node.js 20
+        with:
+          python-version: '3.9'
 
-    - name: Install dependencies
-      run: |
-        pip install openai requests
+      - name: Install dependencies
+        run: |
+          pip install openai requests
 
-    - name: Run AI Code Review
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # Atualize para o novo secret
-        REPOSITORY: ${{ github.repository }}
-        PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python scripts/ai_code_review.py
+      - name: Run AI Code Review
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # Atualize para o novo secret
+          REPOSITORY: ${{ github.repository }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/ai_code_review.py
