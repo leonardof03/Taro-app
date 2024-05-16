@@ -8,8 +8,11 @@ pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
 # Configura os headers para uso nas requisições HTTP
-def get_headers(auth_token, content_type='application/json'):
-    return {'Authorization': f'token {auth_token}', 'Content-Type': content_type}
+def get_headers(auth_token, is_openai=False):
+    if is_openai:
+        return {'Authorization': f'Bearer {auth_token}', 'Content-Type': 'application/json'}
+    else:
+        return {'Authorization': f'token {auth_token}', 'Accept': 'application/vnd.github.v3+json'}
 
 # Obtém as alterações do pull request especificado
 def get_pull_request_changes():
@@ -25,9 +28,9 @@ def get_pull_request_changes():
 # Avalia o código usando o modelo da OpenAI
 def review_code_with_chatgpt(code_changes):
     prompt = "Review the following code changes and provide comments:\n\n" + code_changes
-    headers = get_headers(openai_api_key, 'application/json')
-    data = {"model": "gpt-4o", "prompt": prompt, "max_tokens": 150}
-    response = requests.post('https://api.openai.com/v1/engines/davinci-codex/completions', headers=headers, json=data)
+    headers = get_headers(openai_api_key, is_openai=True)
+    data = {"model": "code-davinci-002", "prompt": prompt, "max_tokens": 150}  # Atualizado para o modelo correto
+    response = requests.post('https://api.openai.com/v1/completions', headers=headers, json=data)
     if response.ok:
         return response.json()['choices'][0]['text']
     else:
