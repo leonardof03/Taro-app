@@ -7,33 +7,26 @@ openai_api_key = os.getenv('OPENAI_API_KEY')  # Certifique-se de definir esta va
 pull_index = os.getenv('PULL_REQUEST_ID')
 repo_name = "leonardof03/taro-app"
 
-# Configura os headers para uso nas requisições HTTP ao GitHub
-def get_github_headers():
-    return {'Authorization': f'token {github_token}', 'Content-Type': 'application/json'}
-
-
-# Configura os headers para uso nas requisições HTTP à API da OpenAI
-def get_openai_headers():
-    return {'Authorization': f'Bearer {openai_api_key}', 'Content-Type': 'application/json'}
+# Configura os headers para uso nas requisições HTTP
+def get_headers(auth_token, content_type='application/json'):
+    return {'Authorization': f'token {auth_token}', 'Content-Type': content_type}
 
 # Obtém as alterações do pull request especificado
 def get_pull_request_changes():
     url = f"https://api.github.com/repos/{repo_name}/pulls/{pull_index}/files"
-    headers = get_github_headers()
+    headers = get_headers(github_token)
     response = requests.get(url, headers=headers)
     if response.ok:
         return response.json()
     else:
         print(f"Failed to fetch data: HTTP {response.status_code}, {response.text}")
-        print(f"Response Headers: {response.headers}")
-        print(f"Request Headers: {headers}")
         return []
 
 # Avalia o código usando o modelo da OpenAI
 def review_code_with_chatgpt(code_changes):
     prompt = "Review the following code changes and provide comments:\n\n" + code_changes
-    headers = get_openai_headers()
-    data = {"model": "gpt-3.5-turgo", "prompt": prompt, "max_tokens": 150}
+    headers = get_headers(openai_api_key, 'application/json')
+    data = {"model": "gpt-4o", "prompt": prompt, "max_tokens": 150}
     response = requests.post('https://api.openai.com/v1/engines/davinci-codex/completions', headers=headers, json=data)
     if response.ok:
         return response.json()['choices'][0]['text']
@@ -44,7 +37,7 @@ def review_code_with_chatgpt(code_changes):
 # Posta um comentário no pull request com a avaliação
 def post_comment_to_pull_request(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
-    headers = get_github_headers()
+    headers = get_headers(github_token)
     data = {'body': comment}
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:
@@ -54,8 +47,8 @@ def post_comment_to_pull_request(comment):
 
 # Main execution block
 if __name__ == "__main__":
-    if not github_token or not openai_api_key:
-        print("Required tokens are not available in environment variables.")
+    if not github_token or not openai_api_key or not pull_index:
+        print("Error: Missing GitHub token, OpenAI API key, or pull request ID.")
     else:
         changes = get_pull_request_changes()
         if changes:
