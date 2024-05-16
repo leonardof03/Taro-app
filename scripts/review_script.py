@@ -24,15 +24,18 @@ def get_pull_request_changes():
     else:
         print(f"Failed to fetch data: HTTP {response.status_code}, {response.text}")
         return []
-
 # Review the code using the OpenAI model
 def review_code_with_chatgpt(code_changes):
     prompt = "Review the following code changes and provide comments:\n\n" + code_changes
     headers = get_headers(openai_api_key, is_openai=True)
-    data = {"model": "gpt-4o", "prompt": prompt, "max_tokens": 150}
-    response = requests.post('https://api.openai.com/v1/completions', headers=headers, json=data)
+    data = {
+        "model": "gpt-4o",
+        "messages": [{"role": "system", "content": "You are a code reviewer."},
+                     {"role": "user", "content": prompt}]
+    }
+    response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
     if response.ok:
-        return response.json()['choices'][0]['text']
+        return response.json()['choices'][0]['message']['content']
     else:
         print(f"Failed to generate review: HTTP {response.status_code}, {response.text}")
         return "Error generating review."
