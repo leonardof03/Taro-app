@@ -40,7 +40,7 @@ def review_code_with_chatgpt(code_changes):
 # Posta um comentário no pull request com a avaliação
 def post_comment_to_pull_request(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
-    headers = get_headers(github
+    headers = get_headers(github_token)
 
 _token)
     data = {'body': comment}
