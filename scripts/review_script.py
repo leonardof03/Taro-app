@@ -29,7 +29,7 @@ def get_pull_request_changes():
 def review_code_with_chatgpt(code_changes):
     prompt = "Review the following code changes and provide comments:\n\n" + code_changes
     headers = get_headers(openai_api_key, is_openai=True)
-    data = {"model": "code-davinci-002", "prompt": prompt, "max_tokens": 150}  # Atualizado para o modelo correto
+    data = {"model": "gpt-4o", "prompt": prompt, "max_tokens": 150}
     response = requests.post('https://api.openai.com/v1/completions', headers=headers, json=data)
     if response.ok:
         return response.json()['choices'][0]['text']
@@ -40,7 +40,9 @@ def review_code_with_chatgpt(code_changes):
 # Posta um comentário no pull request com a avaliação
 def post_comment_to_pull_request(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
-    headers = get_headers(github_token)
+    headers = get_headers(github
+
+_token)
     data = {'body': comment}
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:
@@ -59,4 +61,4 @@ if __name__ == "__main__":
             review_comment = review_code_with_chatgpt(code_snippets)
             post_comment_to_pull_request(review_comment)
         else:
-            print("No changes to review or failed to fetch changes.")
+ente print("No changes to review or failed to fetch changes.")
