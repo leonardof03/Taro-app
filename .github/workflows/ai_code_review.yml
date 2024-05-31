@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  issues: write  # Adicione esta linha para garantir permissões de escrita para issues
+
 jobs:
   review:
     runs-on: ubuntu-latest
