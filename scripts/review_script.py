@@ -1,6 +1,7 @@
 import os
 import requests
 import base64
+import math
 
 # Defining the GitHub token and details of the repository
 github_token = os.getenv('GITHUB_TOKEN')
@@ -42,19 +43,30 @@ def get_file_content(file_path):
 
 # Review the code using the OpenAI model
 def review_code_with_chatgpt(code_changes):
-    prompt = "Review the following code and provide comments:\n\n" + code_changes
-    headers = get_headers(openai_api_key, is_openai=True)
-    data = {
-        "model": "gpt-4",
-        "messages": [{"role": "system", "content": "You are a code reviewer."},
-                     {"role": "user", "content": prompt}]
-    }
-    response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
-    if response.ok:
-        return response.json()['choices'][0]['message']['content']
-    else:
-        print(f"Failed to generate review: HTTP {response.status_code}, {response.text}")
-        return "Error generating review."
+    max_tokens = 4096
+    chunk_size = max_tokens - 1000  # Adjust to ensure we don't exceed token limits
+    num_chunks = math.ceil(len(code_changes) / chunk_size)
+    review_comments = []
+    
+    for i in range(num_chunks):
+        start_idx = i * chunk_size
+        end_idx = start_idx + chunk_size
+        chunk = code_changes[start_idx:end_idx]
+        prompt = "Review the following code and provide comments:\n\n" + chunk
+        headers = get_headers(openai_api_key, is_openai=True)
+        data = {
+            "model": "gpt-4",
+            "messages": [{"role": "system", "content": "You are a code reviewer."},
+                         {"role": "user", "content": prompt}]
+        }
+        response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
+        if response.ok:
+            review_comments.append(response.json()['choices'][0]['message']['content'])
+        else:
+            print(f"Failed to generate review for chunk {i+1}: HTTP {response.status_code}, {response.text}")
+            review_comments.append("Error generating review for this chunk.")
+    
+    return "\n\n".join(review_comments)
 
 # Post a comment on the repository with the evaluation
 def post_comment_to_repository(comment):
