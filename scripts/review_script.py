@@ -37,16 +37,6 @@ def get_file_content(file_path):
         print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
         return ''
 
-def check_openai_quota():
-    url = "https://api.openai.com/v1/dashboard/billing/credit_grants"
-    headers = get_headers(openai_api_key, is_openai=True)
-    response = requests.get(url, headers=headers)
-    if response.ok:
-        return response.json().get('total_available', 0) > 0
-    else:
-        print(f"Failed to check OpenAI quota: HTTP {response.status_code}, {response.text}")
-        return False
-
 def review_code_with_chatgpt(code_changes):
     max_tokens = 4096
     chunk_size = max_tokens - 1000
@@ -57,18 +47,22 @@ def review_code_with_chatgpt(code_changes):
         prompt = "Review the following code and provide comments:\n\n" + chunk
         headers = get_headers(openai_api_key, is_openai=True)
         data = {
-            "model": "gpt-4",
+            "model": "gpt-3.5-turbo",
             "messages": [{"role": "system", "content": "You are a code reviewer."},
                          {"role": "user", "content": prompt}]
         }
-        response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
-        if response.ok:
-            review_comments.append(response.json()['choices'][0]['message']['content'])
-        else:
-            print(f"Failed to generate review for chunk {i//chunk_size + 1}: HTTP {response.status_code}, {response.text}")
-            if response.status_code == 429 and "insufficient_quota" in response.text:
-                print("Insufficient quota to continue.")
+        response = None
+        for attempt in range(5):  # Retry up to 5 times with exponential backoff
+            response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
+            if response.ok:
+                review_comments.append(response.json()['choices'][0]['message']['content'])
                 break
+            else:
+                print(f"Attempt {attempt + 1} failed: HTTP {response.status_code}, {response.text}")
+                if response.status_code == 429:
+                    time.sleep((2 ** attempt) + 1)  # Exponential backoff
+                else:
+                    break
     
     return "\n\n".join(review_comments)
 
@@ -86,18 +80,15 @@ if __name__ == "__main__":
     if not github_token or not openai_api_key:
         print("Error: Missing GitHub token or OpenAI API key.")
     else:
-        if check_openai_quota():
-            files = get_repository_files()
-            if files:
-                code_snippets = ''
-                for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
-                    content = get_file_content(file)
-                    if content:
-                        code_snippets += f"File: {file}\n{content}\n\n"
-                review_comment = review_code_with_chatgpt(code_snippets)
-                if review_comment:
-                    post_comment_to_repository(review_comment)
-            else:
-                print("No files to review or failed to fetch files.")
+        files = get_repository_files()
+        if files:
+            code_snippets = ''
+            for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
+                content = get_file_content(file)
+                if content:
+                    code_snippets += f"File: {file}\n{content}\n\n"
+            review_comment = review_code_with_chatgpt(code_snippets)
+            if review_comment:
+                post_comment_to_repository(review_comment)
         else:
-            print("Insufficient quota to proceed with the review.")
+            print("No files to review or failed to fetch files.")
