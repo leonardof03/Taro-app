@@ -66,15 +66,20 @@ def review_code_with_chatgpt(code_changes):
     
     return "\n\n".join(review_comments)
 
-def post_comment_to_repository(comment):
+def post_issues(comment, github_token, repo_name):
     url = f"https://api.github.com/repos/{repo_name}/issues"
     headers = get_headers(github_token)
-    data = {'title': 'AI Code Review', 'body': comment}
-    response = requests.post(url, headers=headers, json=data)
-    if response.status_code == 201:
-        print("Comment posted successfully")
-    else:
-        print(f"Failed to post comment: HTTP {response.status_code}, {response.text}")
+    
+    max_length = 65536
+    comment_parts = [comment[i:i + max_length] for i in range(0, len(comment), max_length)]
+    
+    for i, part in enumerate(comment_parts):
+        data = {'title': f'AI Code Review Part {i+1}', 'body': part}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 201:
+            print(f"Issue part {i+1} posted successfully")
+        else:
+            print(f"Failed to post issue part {i+1}: HTTP {response.status_code}, {response.text}")
 
 if __name__ == "__main__":
     if not github_token or not openai_api_key:
@@ -83,12 +88,12 @@ if __name__ == "__main__":
         files = get_repository_files()
         if files:
             code_snippets = ''
-            for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
+            for file in files:  # Analyze all files
                 content = get_file_content(file)
                 if content:
                     code_snippets += f"File: {file}\n{content}\n\n"
             review_comment = review_code_with_chatgpt(code_snippets)
             if review_comment:
-                post_comment_to_repository(review_comment)
+                post_issues(review_comment, github_token, repo_name)
         else:
             print("No files to review or failed to fetch files.")
