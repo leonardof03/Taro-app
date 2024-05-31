@@ -37,14 +37,14 @@ def get_file_content(file_path):
         print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
         return ''
 
-def review_code_with_chatgpt(code_changes):
+def analyze_and_fix_code_with_chatgpt(code_changes):
     max_tokens = 4096
     chunk_size = max_tokens - 1000
-    review_comments = []
+    analysis_comments = []
     
     for i in range(0, len(code_changes), chunk_size):
         chunk = code_changes[i:i + chunk_size]
-        prompt = "Review the following code and provide comments:\n\n" + chunk
+        prompt = "Analyze and correct the following code if there are any errors:\n\n" + chunk
         headers = get_headers(openai_api_key, is_openai=True)
         data = {
             "model": "gpt-3.5-turbo",
@@ -55,7 +55,7 @@ def review_code_with_chatgpt(code_changes):
         for attempt in range(5):  # Retry up to 5 times with exponential backoff
             response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
             if response.ok:
-                review_comments.append(response.json()['choices'][0]['message']['content'])
+                analysis_comments.append(response.json()['choices'][0]['message']['content'])
                 break
             else:
                 print(f"Attempt {attempt + 1} failed: HTTP {response.status_code}, {response.text}")
@@ -64,7 +64,7 @@ def review_code_with_chatgpt(code_changes):
                 else:
                     break
     
-    return "\n\n".join(review_comments)
+    return "\n\n".join(analysis_comments)
 
 def post_issues(comment, github_token, repo_name):
     url = f"https://api.github.com/repos/{repo_name}/issues"
@@ -74,7 +74,7 @@ def post_issues(comment, github_token, repo_name):
     comment_parts = [comment[i:i + max_length] for i in range(0, len(comment), max_length)]
     
     for i, part in enumerate(comment_parts):
-        data = {'title': f'AI Code Review Part {i+1}', 'body': part}
+        data = {'title': f'AI Code Analysis Part {i+1}', 'body': part}
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 201:
             print(f"Issue part {i+1} posted successfully")
@@ -87,13 +87,17 @@ if __name__ == "__main__":
     else:
         files = get_repository_files()
         if files:
-            code_snippets = ''
-            for file in files:  # Analyze all files
-                content = get_file_content(file)
-                if content:
-                    code_snippets += f"File: {file}\n{content}\n\n"
-            review_comment = review_code_with_chatgpt(code_snippets)
-            if review_comment:
-                post_issues(review_comment, github_token, repo_name)
+            batch_size = 5
+            for start in range(0, len(files), batch_size):
+                batch_files = files[start:start + batch_size]
+                code_snippets = ''
+                for file in batch_files:
+                    content = get_file_content(file)
+                    if content:
+                        code_snippets += f"File: {file}\n{content}\n\n"
+                analysis_comment = analyze_and_fix_code_with_chatgpt(code_snippets)
+                if analysis_comment:
+                    post_issues(analysis_comment, github_token, repo_name)
+                time.sleep(10)  # Small delay to avoid hitting rate limits
         else:
             print("No files to review or failed to fetch files.")
