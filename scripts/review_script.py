@@ -1,10 +1,11 @@
 import os
 import requests
 import base64
+import time
 
 github_token = os.getenv('GITHUB_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
-repo_name = "leonardof03/taro-app"
+repo_name = "leonardof03/Taro-app"
 
 def get_headers(auth_token, is_openai=False):
     if is_openai:
@@ -35,6 +36,16 @@ def get_file_content(file_path):
     else:
         print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
         return ''
+
+def check_openai_quota():
+    url = "https://api.openai.com/v1/dashboard/billing/credit_grants"
+    headers = get_headers(openai_api_key, is_openai=True)
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        return response.json().get('total_available', 0) > 0
+    else:
+        print(f"Failed to check OpenAI quota: HTTP {response.status_code}, {response.text}")
+        return False
 
 def review_code_with_chatgpt(code_changes):
     max_tokens = 4096
@@ -75,15 +86,18 @@ if __name__ == "__main__":
     if not github_token or not openai_api_key:
         print("Error: Missing GitHub token or OpenAI API key.")
     else:
-        files = get_repository_files()
-        if files:
-            code_snippets = ''
-            for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
-                content = get_file_content(file)
-                if content:
-                    code_snippets += f"File: {file}\n{content}\n\n"
-            review_comment = review_code_with_chatgpt(code_snippets)
-            if review_comment:
-                post_comment_to_repository(review_comment)
+        if check_openai_quota():
+            files = get_repository_files()
+            if files:
+                code_snippets = ''
+                for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
+                    content = get_file_content(file)
+                    if content:
+                        code_snippets += f"File: {file}\n{content}\n\n"
+                review_comment = review_code_with_chatgpt(code_snippets)
+                if review_comment:
+                    post_comment_to_repository(review_comment)
+            else:
+                print("No files to review or failed to fetch files.")
         else:
-            print("No files to review or failed to fetch files.")
+            print("Insufficient quota to proceed with the review.")
