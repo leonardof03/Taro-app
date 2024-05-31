@@ -32,7 +32,10 @@ def get_file_content(file_path):
     response = requests.get(url, headers=headers)
     if response.ok:
         content = response.json().get('content', '')
-        return base64.b64decode(content).decode('utf-8')
+        try:
+            return base64.b64decode(content).decode('utf-8')
+        except UnicodeDecodeError:
+            return base64.b64decode(content).decode('latin-1')
     else:
         print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
         return ''
