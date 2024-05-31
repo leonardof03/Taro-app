@@ -1,5 +1,10 @@
 name: AI Code Review
-on: [pull_request]
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   review:
@@ -14,9 +19,6 @@ jobs:
       run: pip install requests
     - name: Run review script
       env:
-        PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
-        GITHUB_TOKEN: ${{ secrets.MY_LEO }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
-      run: python review_script.py
-      working-directory: scripts
+      run: python scripts/review_script.py
