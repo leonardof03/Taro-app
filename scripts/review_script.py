@@ -2,32 +2,16 @@ import os
 import requests
 import base64
 
-# Defining the GitHub token and details of the repository
 github_token = os.getenv('GITHUB_TOKEN')
 openai_api_key = os.getenv('OPENAI_API_KEY')
 repo_name = "leonardof03/taro-app"
 
-# Configure headers for HTTP requests
 def get_headers(auth_token, is_openai=False):
     if is_openai:
         return {'Authorization': f'Bearer {auth_token}', 'Content-Type': 'application/json'}
     else:
         return {'Authorization': f'token {auth_token}', 'Accept': 'application/vnd.github.v3+json'}
 
-# Check OpenAI quota
-def check_openai_quota():
-    headers = get_headers(openai_api_key, is_openai=True)
-    response = requests.get('https://api.openai.com/v1/dashboard/billing/credit_grants', headers=headers)
-    if response.ok:
-        data = response.json()
-        remaining_quota = data['grants']['data'][0]['grant_remaining']
-        print(f"Remaining quota: {remaining_quota}")
-        return remaining_quota
-    else:
-        print(f"Failed to check OpenAI quota: HTTP {response.status_code}, {response.text}")
-        return 0
-
-# Get the list of files in the repository
 def get_repository_files():
     url = f"https://api.github.com/repos/{repo_name}/git/trees/main?recursive=1"
     headers = get_headers(github_token)
@@ -38,7 +22,6 @@ def get_repository_files():
         print(f"Failed to fetch data: HTTP {response.status_code}, {response.text}")
         return []
 
-# Get the content of a file
 def get_file_content(file_path):
     url = f"https://api.github.com/repos/{repo_name}/contents/{file_path}"
     headers = get_headers(github_token)
@@ -53,10 +36,9 @@ def get_file_content(file_path):
         print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
         return ''
 
-# Review the code using the OpenAI model
 def review_code_with_chatgpt(code_changes):
     max_tokens = 4096
-    chunk_size = max_tokens - 1000  # Adjust to ensure we don't exceed token limits
+    chunk_size = max_tokens - 1000
     review_comments = []
     
     for i in range(0, len(code_changes), chunk_size):
@@ -77,7 +59,6 @@ def review_code_with_chatgpt(code_changes):
     
     return "\n\n".join(review_comments)
 
-# Post a comment on the repository with the evaluation
 def post_comment_to_repository(comment):
     url = f"https://api.github.com/repos/{repo_name}/issues"
     headers = get_headers(github_token)
@@ -88,24 +69,19 @@ def post_comment_to_repository(comment):
     else:
         print(f"Failed to post comment: HTTP {response.status_code}, {response.text}")
 
-# Main execution block
 if __name__ == "__main__":
     if not github_token or not openai_api_key:
         print("Error: Missing GitHub token or OpenAI API key.")
     else:
-        quota = check_openai_quota()
-        if quota > 0:
-            files = get_repository_files()
-            if files:
-                code_snippets = ''
-                for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
-                    content = get_file_content(file)
-                    if content:
-                        code_snippets += f"File: {file}\n{content}\n\n"
-                review_comment = review_code_with_chatgpt(code_snippets)
-                if review_comment:
-                    post_comment_to_repository(review_comment)
-            else:
-                print("No files to review or failed to fetch files.")
+        files = get_repository_files()
+        if files:
+            code_snippets = ''
+            for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
+                content = get_file_content(file)
+                if content:
+                    code_snippets += f"File: {file}\n{content}\n\n"
+            review_comment = review_code_with_chatgpt(code_snippets)
+            if review_comment:
+                post_comment_to_repository(review_comment)
         else:
-            print("Insufficient quota to generate a review.")
+            print("No files to review or failed to fetch files.")
