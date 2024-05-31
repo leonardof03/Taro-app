@@ -1,10 +1,10 @@
 import os
 import requests
+import base64
 
-# Defining the GitHub token and details of the pull request
+# Defining the GitHub token and details of the repository
 github_token = os.getenv('GITHUB_TOKEN')
-openai_api_key = os.getenv('OPENAI_API_KEY')  # Make sure to set this environment variable in your workflow
-pull_index = os.getenv('PULL_REQUEST_ID')
+openai_api_key = os.getenv('OPENAI_API_KEY')
 repo_name = "leonardof03/taro-app"
 
 # Configure headers for HTTP requests
@@ -14,22 +14,35 @@ def get_headers(auth_token, is_openai=False):
     else:
         return {'Authorization': f'token {auth_token}', 'Accept': 'application/vnd.github.v3+json'}
 
-# Get the changes of the specified pull request
-def get_pull_request_changes():
-    url = f"https://api.github.com/repos/{repo_name}/pulls/{pull_index}/files"
+# Get the list of files in the repository
+def get_repository_files():
+    url = f"https://api.github.com/repos/{repo_name}/git/trees/main?recursive=1"
     headers = get_headers(github_token)
     response = requests.get(url, headers=headers)
     if response.ok:
-        return response.json()
+        return [file['path'] for file in response.json().get('tree', []) if file['type'] == 'blob']
     else:
         print(f"Failed to fetch data: HTTP {response.status_code}, {response.text}")
         return []
+
+# Get the content of a file
+def get_file_content(file_path):
+    url = f"https://api.github.com/repos/{repo_name}/contents/{file_path}"
+    headers = get_headers(github_token)
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        content = response.json().get('content', '')
+        return base64.b64decode(content).decode('utf-8')
+    else:
+        print(f"Failed to fetch file content: HTTP {response.status_code}, {response.text}")
+        return ''
+
 # Review the code using the OpenAI model
 def review_code_with_chatgpt(code_changes):
-    prompt = "Review the following code changes and provide comments:\n\n" + code_changes
+    prompt = "Review the following code and provide comments:\n\n" + code_changes
     headers = get_headers(openai_api_key, is_openai=True)
     data = {
-        "model": "gpt-4o",
+        "model": "gpt-4",
         "messages": [{"role": "system", "content": "You are a code reviewer."},
                      {"role": "user", "content": prompt}]
     }
@@ -40,11 +53,11 @@ def review_code_with_chatgpt(code_changes):
         print(f"Failed to generate review: HTTP {response.status_code}, {response.text}")
         return "Error generating review."
 
-# Post a comment on the pull request with the evaluation
-def post_comment_to_pull_request(comment):
-    url = f"https://api.github.com/repos/{repo_name}/issues/{pull_index}/comments"
+# Post a comment on the repository with the evaluation
+def post_comment_to_repository(comment):
+    url = f"https://api.github.com/repos/{repo_name}/issues"
     headers = get_headers(github_token)
-    data = {'body': comment}
+    data = {'title': 'AI Code Review', 'body': comment}
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 201:
         print("Comment posted successfully")
@@ -53,13 +66,17 @@ def post_comment_to_pull_request(comment):
 
 # Main execution block
 if __name__ == "__main__":
-    if not github_token or not openai_api_key or not pull_index:
-        print("Error: Missing GitHub token, OpenAI API key, or pull request ID.")
+    if not github_token or not openai_api_key:
+        print("Error: Missing GitHub token or OpenAI API key.")
     else:
-        changes = get_pull_request_changes()
-        if changes:
-            code_snippets = '\n'.join([file['patch'] for file in changes if 'patch' in file])
+        files = get_repository_files()
+        if files:
+            code_snippets = ''
+            for file in files:
+                content = get_file_content(file)
+                if content:
+                    code_snippets += f"File: {file}\n{content}\n\n"
             review_comment = review_code_with_chatgpt(code_snippets)
-            post_comment_to_pull_request(review_comment)
+            post_comment_to_repository(review_comment)
         else:
-            print("No changes to review or failed to fetch changes.")
+            print("No files to review or failed to fetch files.")
