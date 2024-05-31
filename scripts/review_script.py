@@ -55,7 +55,9 @@ def review_code_with_chatgpt(code_changes):
             review_comments.append(response.json()['choices'][0]['message']['content'])
         else:
             print(f"Failed to generate review for chunk {i//chunk_size + 1}: HTTP {response.status_code}, {response.text}")
-            break
+            if response.status_code == 429 and "insufficient_quota" in response.text:
+                print("Insufficient quota to continue.")
+                break
     
     return "\n\n".join(review_comments)
 
