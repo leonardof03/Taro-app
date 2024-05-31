@@ -1,7 +1,6 @@
 import os
 import requests
 import base64
-import math
 
 # Defining the GitHub token and details of the repository
 github_token = os.getenv('GITHUB_TOKEN')
@@ -45,13 +44,10 @@ def get_file_content(file_path):
 def review_code_with_chatgpt(code_changes):
     max_tokens = 4096
     chunk_size = max_tokens - 1000  # Adjust to ensure we don't exceed token limits
-    num_chunks = math.ceil(len(code_changes) / chunk_size)
     review_comments = []
     
-    for i in range(num_chunks):
-        start_idx = i * chunk_size
-        end_idx = start_idx + chunk_size
-        chunk = code_changes[start_idx:end_idx]
+    for i in range(0, len(code_changes), chunk_size):
+        chunk = code_changes[i:i + chunk_size]
         prompt = "Review the following code and provide comments:\n\n" + chunk
         headers = get_headers(openai_api_key, is_openai=True)
         data = {
@@ -63,8 +59,8 @@ def review_code_with_chatgpt(code_changes):
         if response.ok:
             review_comments.append(response.json()['choices'][0]['message']['content'])
         else:
-            print(f"Failed to generate review for chunk {i+1}: HTTP {response.status_code}, {response.text}")
-            review_comments.append("Error generating review for this chunk.")
+            print(f"Failed to generate review for chunk {i//chunk_size + 1}: HTTP {response.status_code}, {response.text}")
+            break
     
     return "\n\n".join(review_comments)
 
@@ -87,11 +83,12 @@ if __name__ == "__main__":
         files = get_repository_files()
         if files:
             code_snippets = ''
-            for file in files:
+            for file in files[:5]:  # Limiting to the first 5 files to avoid exceeding the quota
                 content = get_file_content(file)
                 if content:
                     code_snippets += f"File: {file}\n{content}\n\n"
             review_comment = review_code_with_chatgpt(code_snippets)
-            post_comment_to_repository(review_comment)
+            if review_comment:
+                post_comment_to_repository(review_comment)
         else:
             print("No files to review or failed to fetch files.")
