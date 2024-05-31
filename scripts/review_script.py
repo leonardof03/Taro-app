@@ -44,7 +44,7 @@ def analyze_and_fix_code_with_chatgpt(code_changes):
     
     for i in range(0, len(code_changes), chunk_size):
         chunk = code_changes[i:i + chunk_size]
-        prompt = "Analyze and correct the following code if there are any errors:\n\n" + chunk
+        prompt = "Please analyze this repository and provide a rating from 1 to 5, where 1 indicates a poorly executed project and 5 indicates a well-executed project. Identify the programming languages used and provide a brief description of the project." + chunk
         headers = get_headers(openai_api_key, is_openai=True)
         data = {
             "model": "gpt-3.5-turbo",
